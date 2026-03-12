@@ -1,28 +1,13 @@
-import { useState } from "react";
 import { FileSpreadsheet, FileText, Settings, Loader2, CheckCircle2, XCircle } from "lucide-react";
 import AgentCard from "@/components/AgentCard";
 import FileDropZone from "@/components/FileDropZone";
 import { Button } from "@/components/ui/button";
+import { useAgentUpload } from "@/hooks/useAgentUpload";
 
-type JumperState = "idle" | "processing" | "success" | "error";
+const JUMPER_WEBHOOK = "https://fatspidermonkey-n8n.cloudfy.live/webhook/jumper";
 
 const Index = () => {
-  const [jumperState, setJumperState] = useState<JumperState>("idle");
-  const [, setSelectedFile] = useState<File | null>(null);
-
-  const handleFileSelected = (file: File) => {
-    setSelectedFile(file);
-    setJumperState("processing");
-    // Mock: simulate processing for 2 seconds
-    setTimeout(() => {
-      setJumperState("success");
-    }, 2000);
-  };
-
-  const handleReset = () => {
-    setSelectedFile(null);
-    setJumperState("idle");
-  };
+  const { state, errorMessage, downloadUrl, upload, reset } = useAgentUpload(JUMPER_WEBHOOK);
 
   return (
     <div className="min-h-screen bg-background">
@@ -38,24 +23,26 @@ const Index = () => {
             description="Converte Histórico Operacional em PLANFINAL"
             icon={FileSpreadsheet}
           >
-            {jumperState === "idle" && (
-              <FileDropZone accept={[".xls"]} onFileSelected={handleFileSelected} />
+            {state === "idle" && (
+              <FileDropZone accept={[".xls"]} onFileSelected={upload} />
             )}
 
-            {jumperState === "processing" && (
+            {state === "processing" && (
               <div className="flex flex-col items-center gap-3 py-6">
                 <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                 <p className="text-sm text-muted-foreground">Processando...</p>
               </div>
             )}
 
-            {jumperState === "success" && (
+            {state === "success" && (
               <div className="flex flex-col items-center gap-3 py-6">
                 <CheckCircle2 className="h-8 w-8 text-green-600" />
                 <p className="text-sm font-medium">Arquivo pronto!</p>
-                <Button size="sm">Baixar PLANFINAL.xlsx</Button>
+                <Button size="sm" asChild>
+                  <a href={downloadUrl!} download="PLANFINAL.xlsx">Baixar PLANFINAL.xlsx</a>
+                </Button>
                 <button
-                  onClick={handleReset}
+                  onClick={reset}
                   className="text-xs text-muted-foreground underline hover:text-foreground transition-colors"
                 >
                   Processar outro
@@ -63,29 +50,19 @@ const Index = () => {
               </div>
             )}
 
-            {jumperState === "error" && (
+            {state === "error" && (
               <div className="flex flex-col items-center gap-3 py-6">
                 <XCircle className="h-8 w-8 text-destructive" />
-                <p className="text-sm text-destructive">Erro ao processar arquivo</p>
-                <Button variant="outline" size="sm" onClick={handleReset}>
+                <p className="text-sm text-destructive">{errorMessage}</p>
+                <Button variant="outline" size="sm" onClick={reset}>
                   Tentar novamente
                 </Button>
               </div>
             )}
           </AgentCard>
 
-          <AgentCard
-            title="STONER"
-            description="Em breve"
-            icon={FileText}
-            disabled
-          />
-          <AgentCard
-            title="MAQER"
-            description="Em breve"
-            icon={Settings}
-            disabled
-          />
+          <AgentCard title="STONER" description="Em breve" icon={FileText} disabled />
+          <AgentCard title="MAQER" description="Em breve" icon={Settings} disabled />
         </div>
       </main>
     </div>
