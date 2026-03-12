@@ -1,12 +1,35 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { FileSpreadsheet, FileText, Settings } from "lucide-react";
+import AgentCard from "@/components/AgentCard";
 
 const Index = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-background">
+      <header className="border-b px-6 py-5">
+        <h1 className="text-2xl font-bold tracking-tight">JCRP</h1>
+        <p className="text-sm text-muted-foreground">Automações</p>
+      </header>
+
+      <main className="mx-auto max-w-5xl px-6 py-10">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <AgentCard
+            title="JUMPER"
+            description="Converte Histórico Operacional em PLANFINAL"
+            icon={FileSpreadsheet}
+          />
+          <AgentCard
+            title="STONER"
+            description="Em breve"
+            icon={FileText}
+            disabled
+          />
+          <AgentCard
+            title="MAQER"
+            description="Em breve"
+            icon={Settings}
+            disabled
+          />
+        </div>
+      </main>
     </div>
   );
 };
