@@ -1,4 +1,4 @@
-import { FileSpreadsheet, FileText, Settings, Loader2, CheckCircle2, XCircle } from "lucide-react";
+import { FileSpreadsheet, FileSearch, Settings, Loader2, CheckCircle2, XCircle } from "lucide-react";
 import AgentCard from "@/components/AgentCard";
 import FileDropZone from "@/components/FileDropZone";
 import { Button } from "@/components/ui/button";
