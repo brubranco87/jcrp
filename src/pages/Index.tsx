@@ -11,7 +11,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b px-6 py-5">
+      <header className="border-b px-6 py-5 bg-[hsl(120,30%,25%)]">
         <h1 className="text-2xl font-bold tracking-tight">JCRP</h1>
         <p className="text-sm text-muted-foreground">Automações</p>
       </header>
