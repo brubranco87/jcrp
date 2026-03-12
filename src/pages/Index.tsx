@@ -62,7 +62,7 @@ const Index = () => {
           </AgentCard>
 
           <AgentCard title="STONER" description="Em breve" icon={FileText} disabled />
-          <AgentCard title="MAQER" description="Em breve" icon={Settings} disabled />
+          <AgentCard title="MAQER" description="In Progress" icon={Settings} disabled />
         </div>
       </main>
     </div>
