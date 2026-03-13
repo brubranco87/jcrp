@@ -80,7 +80,50 @@ const Index = () => {
           </AgentCard>
 
           <AgentCard title="STONER" description="Em breve" icon={FileSearch} disabled />
-          <AgentCard title="MAQER" description="Criando" icon={Settings} disabled />
+          <AgentCard
+            title="MAQER"
+            description="Converte XLSX Stone em CSV e envia ao webhook"
+            icon={Settings}
+          >
+            {maqer.state === "idle" && (
+              <FileDropZone accept={[".xlsx"]} onFileSelected={handleMaqerUpload} />
+            )}
+
+            {maqer.state === "processing" && (
+              <div className="flex flex-col items-center gap-3 py-6">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                <p className="text-sm text-muted-foreground">Processando...</p>
+              </div>
+            )}
+
+            {maqer.state === "success" && (
+              <div className="flex flex-col items-center gap-3 py-6">
+                <CheckCircle2 className="h-8 w-8 text-green-600" />
+                <p className="text-sm font-medium">Arquivo processado!</p>
+                {maqer.downloadUrl && (
+                  <Button size="sm" asChild>
+                    <a href={maqer.downloadUrl} download="resultado_maqer.xlsx">Baixar resultado</a>
+                  </Button>
+                )}
+                <button
+                  onClick={maqer.reset}
+                  className="text-xs text-muted-foreground underline hover:text-foreground transition-colors"
+                >
+                  Processar outro
+                </button>
+              </div>
+            )}
+
+            {maqer.state === "error" && (
+              <div className="flex flex-col items-center gap-3 py-6">
+                <XCircle className="h-8 w-8 text-destructive" />
+                <p className="text-sm text-destructive">{maqer.errorMessage}</p>
+                <Button variant="outline" size="sm" onClick={maqer.reset}>
+                  Tentar novamente
+                </Button>
+              </div>
+            )}
+          </AgentCard>
         </div>
       </main>
     </div>
