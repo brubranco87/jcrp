@@ -7,7 +7,7 @@ import { useCallback } from "react";
 import * as XLSX from "xlsx";
 
 const JUMPER_WEBHOOK = "https://fatspidermonkey-n8n.cloudfy.live/webhook/jumper";
-const MAQER_WEBHOOK = "https://fatspidermonkey-n8n.cloudfy.live/workflow/V69GLyGU72cztIqL";
+const MAQER_WEBHOOK = "https://fatspidermonkey-n8n.cloudfy.live/webhook/maqer";
 
 async function convertXlsxToCsv(file: File): Promise<File> {
   const buffer = await file.arrayBuffer();
