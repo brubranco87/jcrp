@@ -3,11 +3,29 @@ import AgentCard from "@/components/AgentCard";
 import FileDropZone from "@/components/FileDropZone";
 import { Button } from "@/components/ui/button";
 import { useAgentUpload } from "@/hooks/useAgentUpload";
+import { useCallback } from "react";
+import * as XLSX from "xlsx";
 
 const JUMPER_WEBHOOK = "https://fatspidermonkey-n8n.cloudfy.live/webhook/jumper";
+const MAQER_WEBHOOK = "https://fatspidermonkey-n8n.cloudfy.live/workflow/V69GLyGU72cztIqL";
+
+async function convertXlsxToCsv(file: File): Promise<File> {
+  const buffer = await file.arrayBuffer();
+  const wb = XLSX.read(buffer, { type: "array" });
+  const sheetName = wb.SheetNames.find((n) => n === "Sheet 1") ?? wb.SheetNames[0];
+  const csv = XLSX.utils.sheet_to_csv(wb.Sheets[sheetName]);
+  const blob = new Blob([csv], { type: "text/csv" });
+  return new File([blob], "relatorio_stone.csv", { type: "text/csv" });
+}
 
 const Index = () => {
   const { state, errorMessage, downloadUrl, upload, reset } = useAgentUpload(JUMPER_WEBHOOK);
+  const maqer = useAgentUpload(MAQER_WEBHOOK);
+
+  const handleMaqerUpload = useCallback(async (file: File) => {
+    const csvFile = await convertXlsxToCsv(file);
+    maqer.upload(csvFile);
+  }, [maqer]);
 
   return (
     <div className="min-h-screen bg-background">
