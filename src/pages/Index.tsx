@@ -3,11 +3,29 @@ import AgentCard from "@/components/AgentCard";
 import FileDropZone from "@/components/FileDropZone";
 import { Button } from "@/components/ui/button";
 import { useAgentUpload } from "@/hooks/useAgentUpload";
+import { useCallback } from "react";
+import * as XLSX from "xlsx";
 
 const JUMPER_WEBHOOK = "https://fatspidermonkey-n8n.cloudfy.live/webhook/jumper";
+const MAQER_WEBHOOK = "https://fatspidermonkey-n8n.cloudfy.live/workflow/V69GLyGU72cztIqL";
+
+async function convertXlsxToCsv(file: File): Promise<File> {
+  const buffer = await file.arrayBuffer();
+  const wb = XLSX.read(buffer, { type: "array" });
+  const sheetName = wb.SheetNames.find((n) => n === "Sheet 1") ?? wb.SheetNames[0];
+  const csv = XLSX.utils.sheet_to_csv(wb.Sheets[sheetName]);
+  const blob = new Blob([csv], { type: "text/csv" });
+  return new File([blob], "relatorio_stone.csv", { type: "text/csv" });
+}
 
 const Index = () => {
   const { state, errorMessage, downloadUrl, upload, reset } = useAgentUpload(JUMPER_WEBHOOK);
+  const maqer = useAgentUpload(MAQER_WEBHOOK);
+
+  const handleMaqerUpload = useCallback(async (file: File) => {
+    const csvFile = await convertXlsxToCsv(file);
+    maqer.upload(csvFile);
+  }, [maqer]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -62,7 +80,50 @@ const Index = () => {
           </AgentCard>
 
           <AgentCard title="STONER" description="Em breve" icon={FileSearch} disabled />
-          <AgentCard title="MAQER" description="Criando" icon={Settings} disabled />
+          <AgentCard
+            title="MAQER"
+            description="Converte XLSX Stone em CSV e envia ao webhook"
+            icon={Settings}
+          >
+            {maqer.state === "idle" && (
+              <FileDropZone accept={[".xlsx"]} onFileSelected={handleMaqerUpload} />
+            )}
+
+            {maqer.state === "processing" && (
+              <div className="flex flex-col items-center gap-3 py-6">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                <p className="text-sm text-muted-foreground">Processando...</p>
+              </div>
+            )}
+
+            {maqer.state === "success" && (
+              <div className="flex flex-col items-center gap-3 py-6">
+                <CheckCircle2 className="h-8 w-8 text-green-600" />
+                <p className="text-sm font-medium">Arquivo processado!</p>
+                {maqer.downloadUrl && (
+                  <Button size="sm" asChild>
+                    <a href={maqer.downloadUrl} download="resultado_maqer.xlsx">Baixar resultado</a>
+                  </Button>
+                )}
+                <button
+                  onClick={maqer.reset}
+                  className="text-xs text-muted-foreground underline hover:text-foreground transition-colors"
+                >
+                  Processar outro
+                </button>
+              </div>
+            )}
+
+            {maqer.state === "error" && (
+              <div className="flex flex-col items-center gap-3 py-6">
+                <XCircle className="h-8 w-8 text-destructive" />
+                <p className="text-sm text-destructive">{maqer.errorMessage}</p>
+                <Button variant="outline" size="sm" onClick={maqer.reset}>
+                  Tentar novamente
+                </Button>
+              </div>
+            )}
+          </AgentCard>
         </div>
       </main>
     </div>
