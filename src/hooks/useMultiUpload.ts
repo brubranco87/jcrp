@@ -68,9 +68,11 @@ export function useMultiUpload(): UseMultiUploadReturn {
       })
       .then(async (res) => {
         if (timeout) clearTimeout(timeout);
+        console.log(`[STONER] ${unit} response: status=${res.status}, content-type=${res.headers.get("content-type")}`);
         if (!res.ok) throw new Error("status");
 
         const raw = await res.text();
+        console.log(`[STONER] ${unit} body (first 200 chars):`, raw.slice(0, 200));
         let json: { status?: string; count?: number } | null = null;
 
         if (raw.trim()) {
@@ -86,6 +88,7 @@ export function useMultiUpload(): UseMultiUploadReturn {
       })
       .catch((err) => {
         if (timeout) clearTimeout(timeout);
+        console.error(`[STONER] ${unit} error:`, err);
         const msg =
           err.name === "AbortError"
             ? "Tempo esgotado. Tente novamente."
