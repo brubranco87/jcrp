@@ -98,7 +98,10 @@ export function useMultiUpload(): UseMultiUploadReturn {
     fetch(DOWNLOAD_WEBHOOK, { method: "POST", signal: controller.signal })
       .then(async (res) => {
         clearTimeout(timeout);
-        if (!res.ok) throw new Error("status");
+        const ct = res.headers.get("content-type") || "";
+        if (!res.ok || (!ct.includes("spreadsheet") && !ct.includes("octet-stream"))) {
+          throw new Error("Resposta inválida do servidor");
+        }
         const blob = await res.blob();
         const url = URL.createObjectURL(blob);
         setDownloadUrl(url);
@@ -109,7 +112,7 @@ export function useMultiUpload(): UseMultiUploadReturn {
         const msg =
           err.name === "AbortError"
             ? "Tempo esgotado. Tente novamente."
-            : "Erro ao baixar. Tente novamente.";
+            : "Erro ao gerar consolidado. Tente novamente.";
         setDownloadError(msg);
         setDownloadState("error");
       });
