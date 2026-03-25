@@ -118,7 +118,13 @@ export function useMultiUpload(): UseMultiUploadReturn {
       });
   }, []);
 
-  const resetAll = useCallback(() => {
+  useEffect(() => {
+    if (allDone && downloadState === "idle") {
+      downloadFinal();
+    }
+  }, [allDone, downloadState, downloadFinal]);
+
+
     Object.values(abortRefs.current).forEach((c) => c.abort());
     if (downloadUrl) URL.revokeObjectURL(downloadUrl);
     setSlots(makeInitialSlots());
