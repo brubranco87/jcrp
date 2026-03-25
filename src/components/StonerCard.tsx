@@ -6,7 +6,7 @@ import { useCallback } from "react";
 
 const UNITS = ["JCRP", "PAN", "BARU"] as const;
 
-const StonerCard = () => {
+const StonerCard: React.FC = () => {
   const { slots, allDone, downloadState, downloadUrl, downloadError, uploadSlot, resetSlot, downloadFinal, resetAll } =
     useMultiUpload();
 
