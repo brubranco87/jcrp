@@ -124,7 +124,7 @@ export function useMultiUpload(): UseMultiUploadReturn {
     }
   }, [allDone, downloadState, downloadFinal]);
 
-
+  const resetAll = useCallback(() => {
     Object.values(abortRefs.current).forEach((c) => c.abort());
     if (downloadUrl) URL.revokeObjectURL(downloadUrl);
     setSlots(makeInitialSlots());
