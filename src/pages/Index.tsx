@@ -1,6 +1,7 @@
 import { FileSpreadsheet, FileSearch, Settings, Loader2, CheckCircle2, XCircle } from "lucide-react";
 import AgentCard from "@/components/AgentCard";
 import FileDropZone from "@/components/FileDropZone";
+import StonerCard from "@/components/StonerCard";
 import { Button } from "@/components/ui/button";
 import { useAgentUpload } from "@/hooks/useAgentUpload";
 import { useCallback } from "react";
@@ -79,7 +80,13 @@ const Index = () => {
             )}
           </AgentCard>
 
-          <AgentCard title="STONER" description="Em breve" icon={FileSearch} disabled />
+          <AgentCard
+            title="STONER"
+            description="Consolida 3 relatórios Stone (JCRP, PAN, BARU)"
+            icon={FileSearch}
+          >
+            <StonerCard />
+          </AgentCard>
           <AgentCard
             title="MAQER"
             description="Converte XLSX Stone em CSV e envia ao webhook"
