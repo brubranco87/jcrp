@@ -1,6 +1,7 @@
 import { FileSpreadsheet, FileSearch, Settings, Loader2, CheckCircle2, XCircle } from "lucide-react";
 import AgentCard from "@/components/AgentCard";
 import FileDropZone from "@/components/FileDropZone";
+import StonerCard from "@/components/StonerCard";
 import { Button } from "@/components/ui/button";
 import { useAgentUpload } from "@/hooks/useAgentUpload";
 import { useCallback } from "react";
