@@ -80,7 +80,13 @@ const Index = () => {
             )}
           </AgentCard>
 
-          <AgentCard title="STONER" description="Em breve" icon={FileSearch} disabled />
+          <AgentCard
+            title="STONER"
+            description="Consolida 3 relatórios Stone (JCRP, PAN, BARU)"
+            icon={FileSearch}
+          >
+            <StonerCard />
+          </AgentCard>
           <AgentCard
             title="MAQER"
             description="Converte XLSX Stone em CSV e envia ao webhook"
