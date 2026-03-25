@@ -48,12 +48,6 @@ export function useMultiUpload(): UseMultiUploadReturn {
 
   const allDone = UNITS.every((u) => slots[u]?.state === "done");
 
-  useEffect(() => {
-    if (allDone && downloadState === "idle") {
-      downloadFinal();
-    }
-  }, [allDone, downloadState, downloadFinal]);
-
   const updateSlot = (unit: string, patch: Partial<SlotInfo>) =>
     setSlots((prev) => ({ ...prev, [unit]: { ...prev[unit], ...patch } }));
 
