@@ -55,25 +55,37 @@ export function useMultiUpload(): UseMultiUploadReturn {
     const controller = new AbortController();
     abortRefs.current[unit]?.abort();
     abortRefs.current[unit] = controller;
-    const timeout = setTimeout(() => controller.abort(), 60000);
+    let timeout: ReturnType<typeof setTimeout> | undefined;
 
     updateSlot(unit, { state: "processing", errorMessage: "", count: 0 });
 
     convertXlsxToCsv(file)
       .then((csvFile) => {
+        timeout = setTimeout(() => controller.abort(), 60000);
         const fd = new FormData();
         fd.append("file", csvFile);
         return fetch(`${WEBHOOK}?unidade=${unit}`, { method: "POST", body: fd, signal: controller.signal });
       })
       .then(async (res) => {
-        clearTimeout(timeout);
+        if (timeout) clearTimeout(timeout);
         if (!res.ok) throw new Error("status");
-        const json = await res.json();
-        if (json.status !== "ok") throw new Error("status");
-        updateSlot(unit, { state: "done", count: json.count ?? 0 });
+
+        const raw = await res.text();
+        let json: { status?: string; count?: number } | null = null;
+
+        if (raw.trim()) {
+          try {
+            json = JSON.parse(raw) as { status?: string; count?: number };
+          } catch {
+            throw new Error("invalid-json");
+          }
+        }
+
+        if (json?.status && json.status !== "ok") throw new Error("status");
+        updateSlot(unit, { state: "done", count: typeof json?.count === "number" ? json.count : 0 });
       })
       .catch((err) => {
-        clearTimeout(timeout);
+        if (timeout) clearTimeout(timeout);
         const msg =
           err.name === "AbortError"
             ? "Tempo esgotado. Tente novamente."
