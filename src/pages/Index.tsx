@@ -1,4 +1,4 @@
-import { FileSpreadsheet, FileSearch, Settings, Loader2, CheckCircle2, XCircle } from "lucide-react";
+import { FileSpreadsheet, FileSearch, Settings, Loader2, CheckCircle2, XCircle, LogOut } from "lucide-react";
 import AgentCard from "@/components/AgentCard";
 import FileDropZone from "@/components/FileDropZone";
 import StonerCard from "@/components/StonerCard";
@@ -19,7 +19,11 @@ async function convertXlsxToCsv(file: File): Promise<File> {
   return new File([blob], "relatorio_stone.csv", { type: "text/csv" });
 }
 
-const Index = () => {
+interface IndexProps {
+  onLogout: () => void;
+}
+
+const Index = ({ onLogout }: IndexProps) => {
   const { state, errorMessage, downloadUrl, upload, reset } = useAgentUpload(JUMPER_WEBHOOK);
   const maqer = useAgentUpload(MAQER_WEBHOOK);
 
@@ -30,9 +34,18 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b px-6 py-5 bg-[hsl(120,30%,25%)]">
-        <h1 className="text-2xl font-bold tracking-tight text-white">JCRP</h1>
-        <p className="text-sm text-white/70">Automações</p>
+      <header className="border-b px-6 py-5 bg-[hsl(120,30%,25%)] flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-white">JCRP</h1>
+          <p className="text-sm text-white/70">Automações</p>
+        </div>
+        <button
+          onClick={onLogout}
+          className="flex items-center gap-2 text-sm text-white/70 hover:text-white transition-colors"
+        >
+          <LogOut className="h-4 w-4" />
+          Sair
+        </button>
       </header>
 
       <main className="mx-auto max-w-5xl px-6 py-10">
