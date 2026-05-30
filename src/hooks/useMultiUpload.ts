@@ -77,7 +77,8 @@ export function useMultiUpload(): UseMultiUploadReturn {
 
         if (raw.trim()) {
           try {
-            json = JSON.parse(raw) as { status?: string; count?: number };
+            const parsed = JSON.parse(raw);
+            json = (Array.isArray(parsed) ? parsed[0] : parsed) as { status?: string; count?: number };
           } catch {
             throw new Error("invalid-json");
           }
